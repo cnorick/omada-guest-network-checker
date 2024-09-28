@@ -47,6 +47,7 @@ function sendDiscoveryMessages() {
         identifiers: ["omada-guest-checker"],
         name: "Omada Checker",
         manufacturer: "Nathan Orick",
+        model: "Omada Checker",
       },
     })
   );
