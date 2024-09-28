@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pi=${1:-omada}
+pi=${1:-walnut}
 
 echo "copying files to test machine (${pi})"
 rsync -au * ${pi}:~/omada-checker

@@ -79,6 +79,7 @@ mqttClient.on("message", (topic, message) => {
       console.log("home assistant online");
       setTimeout(async () => {
         sendDiscoveryMessages();
+        sendBirthMessage();
       }, 5000);
     }
   }
@@ -102,8 +103,8 @@ async function publishDataOnSchedule() {
 mqttClient.on("connect", async () => {
   console.log("connected");
   setTimeout(async () => {
-    sendBirthMessage();
     sendDiscoveryMessages();
+    sendBirthMessage();
     await publishDataOnSchedule();
   }, 5000);
 });
