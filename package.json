@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "getmac": "^6.6.0",
     "mqtt": "^5.7.0"
   }
 }

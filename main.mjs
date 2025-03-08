@@ -1,4 +1,6 @@
 import "dotenv/config";
+import os from 'os';
+import getMac from "getmac";
 import mqtt from "mqtt";
 import { OmadaClient } from "./omada-client.mjs";
 
@@ -15,11 +17,12 @@ const mqttBrokerAddress = process.env.MQTT_BROKER_ADDRESS;
 
 const homeassistantPrefix = "homeassistant";
 const homeassistantStatusTopic = `${homeassistantPrefix}/status`;
-const deviceId = "omada-guest-checker";
+const deviceId = `power-outage-checker-${getMac().replaceAll(':', '')}`;
 const sensorTopicPrefix = `${homeassistantPrefix}/sensor/${deviceId}`;
 const sensorConfigTopic = `${sensorTopicPrefix}/config`;
 const sensorStateTopic = `${sensorTopicPrefix}/state`;
 const availabilityTopic = `${sensorTopicPrefix}/availability`;
+const hostname = os.hostname() || getMac();
 const dataRefreshInterval = 5000;
 
 // See https://use1-omada-northbound.tplinkcloud.com/doc.html#/00%20All/Client/getGridActiveClients
@@ -41,11 +44,11 @@ function sendDiscoveryMessages() {
       state_topic: sensorStateTopic,
       availability_topic: availabilityTopic,
       value_template: "{{ value_json.numGuests }}",
-      unique_id: "numGuests",
+      unique_id: `${deviceId}-omada-checker`,
       name: "Number of Clients on Guest Network",
       device: {
-        identifiers: ["omada-guest-checker"],
-        name: "Omada Checker",
+        identifiers: [`${deviceId}-omada-checker`],
+        name: `Omada Checker - ${hostname}`,
         manufacturer: "Nathan Orick",
         model: "Omada Checker",
       },
@@ -94,7 +97,9 @@ async function publishDataOnSchedule() {
     timeout = undefined;
   }
 
+  console.log('getting data');
   const data = await getData();
+  console.log('data: ', data);
   await mqttClient.publishAsync(sensorStateTopic, JSON.stringify(data));
 
   timeout = setTimeout(async () => {
